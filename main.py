@@ -42,7 +42,7 @@ score = 0
 pygame.mixer.music.load('sound/background.mp3')
 pygame.mixer.music.set_volume(0.2)
 # Звук прыжка???
-# jump_sound = pygame.mixer.Sound('jump.')
+
 
 # Звуки кнопок: Наведение???, нажатие
 # button_sound_hover = pygame.mixer.Sound('sound/hover.wav')
