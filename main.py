@@ -44,6 +44,7 @@ pygame.mixer.music.set_volume(0.2)
 # Звук прыжка???
 
 
+
 # Звуки кнопок: Наведение???, нажатие
 # button_sound_hover = pygame.mixer.Sound('sound/hover.wav')
 button_sound_pressed = pygame.mixer.Sound('sound/pressed.wav')
