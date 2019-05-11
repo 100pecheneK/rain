@@ -64,11 +64,10 @@ class Button:
         # Курсор на кнопке
         if x < mouse[0] < x + self.width and y < mouse[1] < y + self.height:
             pygame.draw.rect(display, self.active_color, (x, y, self.width, self.height))
-            if click[0] == 1:
+            if click[0] == 1 and action is not None:
                 pygame.mixer.Sound.play(button_sound_pressed)
-                pygame.time.delay(1)
-                if action is not None:
-                    action()
+                pygame.time.delay(300)
+                action()
         # Курсор не на кнопке
         else:
             pygame.draw.rect(display, self.inactive_color, (x, y, self.width, self.height))
@@ -156,8 +155,6 @@ def run_game():
     jump_counter = 25
     make_jump = False
 
-    button = Button(100, 50)
-
     while game:
         # Проверяет события
         for event in pygame.event.get():
@@ -197,9 +194,6 @@ def run_game():
         # Отрисовка игрока
         draw_player()
         # Обработка столкновения - если True, то игра закончится и будет выбор между Return и Esc
-
-        button.draw(display_width / 2, display_height / 2, 'test')
-
         if collision(enemy_arr):
             game = False
         # Считаёт очки игрока до тех пор, пока игрок не проиграет
