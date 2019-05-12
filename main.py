@@ -23,9 +23,13 @@ pygame.mixer.pre_init(44100, 16, 2, 4096)  # frequency, size, channels, buffersi
 # --------------------Инициализация Py Game--------------------
 pygame.init()
 
-# Размер окна (стандартно 800x600)
-display_width = 800
-display_height = 600
+# --------------Стандартное разрешение = 800x600---------------
+# -----------------720p разрешение = 1280x720------------------
+# ----------------1080p разрешение = 1920x1080-----------------
+arr_display_width = (800, 1280, 1920)
+arr_display_height = (600, 720, 1080)
+display_width = arr_display_width[0]
+display_height = arr_display_height[0]
 display = pygame.display.set_mode((display_width, display_height))
 
 sky = [pygame.image.load('images/sky_0.png')]
@@ -152,7 +156,10 @@ def menu():
 
     button_start = Button(120, 70)
     button_quit = Button(120, 70)
-
+    button_set_display_0 = Button(70, 70)
+    button_set_display_1 = Button(70, 70)
+    button_set_display_2 = Button(70, 70)
+    button_set_fullscreen = Button(70, 70)
     show = True
     while show:
         # Проверяет события
@@ -163,10 +170,13 @@ def menu():
                 quit()
 
         display.blit(menu_background, (0, 0))
-        button_start.draw(display_width / 2 - button_start.width / 2, display_height / 2 - button_start.width, 'Start',
+        button_start.draw(display_width // 2 - 60, display_height / 4, 'Start',
                           start_game)
-        button_quit.draw(display_width / 2 - button_quit.width / 2,
-                         display_height / 2 - button_quit.height + button_start.height / 2, 'Quit', quit)
+        button_quit.draw(display_width // 2 - 60, display_height / 4 + 100, 'Quit', quit)
+        button_set_display_0.draw(display_width // 2 - 70 - 35, display_height / 4 + 200, '0', set_display_0)
+        button_set_display_1.draw(display_width // 2 - 35, display_height / 4 + 200, '1', set_display_1)
+        button_set_display_2.draw(display_width // 2 + 35, display_height / 4 + 200, '2', set_display_2)
+        button_set_fullscreen.draw(display_width // 2 + 70 + 35, display_height / 4 + 200, 'F', set_fullscreen)
         pygame.display.update()
         FPS.tick(30)
 
@@ -177,6 +187,43 @@ def start_game():
         # Что бы при смерте в прыжке не прыгал в начале новой игры и не падал под текстуры
         jump_counter = 25
         make_jump = False
+
+
+def set_display_0():
+    global display_width, display_height, display
+
+    display_width = arr_display_width[0]
+    display_height = arr_display_height[0]
+    display = pygame.display.set_mode((display_width, display_height))
+
+
+def set_display_1():
+    global display_width, display_height, display
+
+    display_width = arr_display_width[1]
+    display_height = arr_display_height[1]
+    display = pygame.display.set_mode((display_width, display_height))
+
+
+def set_display_2():
+    global display_width, display_height, display
+
+    display_width = arr_display_width[2]
+    display_height = arr_display_height[2]
+    display = pygame.display.set_mode((display_width, display_height))
+
+
+full = 0
+
+
+def set_fullscreen():
+    global display, full
+    if full == 0:
+        display = pygame.display.set_mode((display_width, display_height), pygame.FULLSCREEN)
+        full = 1
+    else:
+        display = pygame.display.set_mode((display_width, display_height))
+        full = 0
 
 
 # -----------------------Главная функция-----------------------
@@ -223,10 +270,11 @@ def main_game():
         if go_left:
             left()
 
-        # Отрисовка неба
-        display.blit(sky[0], (0, 0))
-        # Отрисовка земли
-        display.blit(dirt[0], (0, display_height - 100))
+        # # Отрисовка неба
+        # display.blit(sky[0], (0, 0))
+        # # Отрисовка земли
+        # display.blit(dirt[0], (0, display_height - 100))
+        pygame.draw.rect(display, (240, 240, 240), (0, 0, display_width, display_height))
         # Отрисовка врага
         draw_enemy_arr(enemy_arr)
         # Отрисовка игрока
