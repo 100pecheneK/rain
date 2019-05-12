@@ -3,15 +3,17 @@
     Вдохновил Егорушкин Илья.
 """
 # ----------------------------Цели----------------------------
+# !!!!!Добавить звуки и новые текстуры!!!!!
+# !!!!!!!Поправить текст на кнопках!!!!!!!!
 # Добавить меню с:
-# 	- Старт
+# 	- Старт +
 # 	- Настройки
 # 		- Звук 
 # 		- Разрешение экрана
 # 		- В окне или во весь экран
 # 	- Создатель
 # 		- Информация о создателе
-# 	- Выход
+# 	- Выход +
 # -------------------------Цели конец-------------------------
 
 import pygame
@@ -54,25 +56,31 @@ class Button:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.inactive_color = (0, 0, 0)
-        self.active_color = (255, 255, 255)
+        self.inactive_color = (28, 190, 255)
+        self.active_color = (112, 214, 255)
 
     # Функция отрисовки кнопки
-    def draw(self, x, y, message, action=None):
+    def draw(self, x, y, message, action=None, font_size=30):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         # Курсор на кнопке
         if x < mouse[0] < x + self.width and y < mouse[1] < y + self.height:
             pygame.draw.rect(display, self.active_color, (x, y, self.width, self.height))
-            if click[0] == 1 and action is not None:
+
+            if click[0] == 1:
+
                 pygame.mixer.Sound.play(button_sound_pressed)
                 pygame.time.delay(300)
-                action()
+                if action is not None:
+                    if action == quit:
+                        pygame.quit()
+                        quit()
+                    action()
         # Курсор не на кнопке
         else:
             pygame.draw.rect(display, self.inactive_color, (x, y, self.width, self.height))
 
-        print_text(message, x + 10, y + 10)
+        print_text(message=message, x=x + self.width / 4, y=y + self.height / 6, font_size=font_size)
 
 
 # ---------------------Конец класса кнопок---------------------
@@ -85,9 +93,9 @@ player_height = 50
 # player_y = display_height - player_height - 100
 player_speed = 5
 # Картинки идут от самой левой к самой правой
-player_image = [pygame.image.load('player_l1.png'), pygame.image.load('player_l2.png'),
-                pygame.image.load('player0.png'), pygame.image.load('player_r1.png'),
-                pygame.image.load('player_r2.png')
+player_image = [pygame.image.load('images/player/player_l1.png'), pygame.image.load('images/player/player_l2.png'),
+                pygame.image.load('images/player/player0.png'), pygame.image.load('images/player/player_r1.png'),
+                pygame.image.load('images/player/player_r2.png')
                 ]
 # Это счётчик текущей картинки
 img_counter = 0
@@ -138,8 +146,41 @@ class Enemy:
 pygame.mixer.music.play(-1)
 
 
+# Игровое меню
+def menu():
+    menu_background = pygame.image.load('images/menu.png')
+
+    button_start = Button(120, 70)
+    button_quit = Button(120, 70)
+
+    show = True
+    while show:
+        # Проверяет события
+        for event in pygame.event.get():
+            # Если нажата кнопка выхода, то завершить игру
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        display.blit(menu_background, (0, 0))
+        button_start.draw(display_width / 2 - button_start.width / 2, display_height / 2 - button_start.width, 'Start',
+                          start_game)
+        button_quit.draw(display_width / 2 - button_quit.width / 2,
+                         display_height / 2 - button_quit.height + button_start.height / 2, 'Quit', quit)
+        pygame.display.update()
+        FPS.tick(30)
+
+
+def start_game():
+    global jump_counter, make_jump
+    while main_game():
+        # Что бы при смерте в прыжке не прыгал в начале новой игры и не падал под текстуры
+        jump_counter = 25
+        make_jump = False
+
+
 # -----------------------Главная функция-----------------------
-def run_game():
+def main_game():
     global fps, make_jump, jump_counter, go_right, go_left, enemy_arr, score, player_x, player_y, jump_counter
 
     # Важная переменная game
@@ -151,9 +192,6 @@ def run_game():
     # Координаты определены тут, потому что после проигрыша координаты должны обновиться
     player_x = display_width // 2 - player_width / 2
     player_y = display_height - player_height - 100
-    # Что бы при смерте в прыжке не прыгал в начале новой игры и не падал под текстуры
-    jump_counter = 25
-    make_jump = False
 
     while game:
         # Проверяет события
@@ -288,7 +326,7 @@ def print_text(message, x, y, font_color=(255, 255, 255), font_type='fonts/font.
 
 def pause():
     paused = True
-
+    print_text("Press Return for continue, or Tab to exit", 100, 100)
     # Пауза музыки
     pygame.mixer.music.pause()
     # Если нажата кнопка выхода, то завершить игру
@@ -298,8 +336,9 @@ def pause():
                 pygame.quit()
                 quit()
 
-        print_text("Press Return for continue, or Tab to exit", 100, 100)
+        # print_text("Press Return for continue, or Esc to exit", 100, 100)
         # Нажатая кнопка
+
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RETURN]:
             paused = False
@@ -336,9 +375,9 @@ def game_over():
 
 
 # -------------------------START GAME-------------------------
+menu()
 # Если game_over() вернёт True то игра не закрывается.
 # В случае проигрыша предлагается выбор Return - продолжить или Esc - выйти
-while run_game():
-    pass
+
 pygame.quit()
 quit()
