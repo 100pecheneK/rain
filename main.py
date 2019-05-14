@@ -32,8 +32,10 @@ display_width = arr_display_width[0]
 display_height = arr_display_height[0]
 display = pygame.display.set_mode((display_width, display_height))
 
-sky = [pygame.image.load('images/sky_0.png')]
-dirt = [pygame.image.load('images/dirt_0.png')]
+sky = [pygame.image.load('images/800x600/sky.png'), pygame.image.load('images/1280x720/sky.png'),
+       pygame.image.load('images/1920x1080/sky.png')]
+dirt = [pygame.image.load('images/800x600/dirt.png'), pygame.image.load('images/1280x720/dirt.png'),
+        pygame.image.load('images/1920x1080/dirt.png')]
 # Название игры и иконка(отсутствует)
 pygame.display.set_caption("RAIN")
 # icon = pygame.image.load("icon.png")
@@ -97,9 +99,11 @@ player_height = 50
 # player_y = display_height - player_height - 100
 player_speed = 5
 # Картинки идут от самой левой к самой правой
-player_image = [pygame.image.load('images/player/player_l1.png'), pygame.image.load('images/player/player_l2.png'),
-                pygame.image.load('images/player/player0.png'), pygame.image.load('images/player/player_r1.png'),
-                pygame.image.load('images/player/player_r2.png')
+player_image = [pygame.image.load('images/player/player_1.png'),
+                pygame.image.load('images/player/player_2.png'),
+                pygame.image.load('images/player/player_3.png'),
+                pygame.image.load('images/player/player_4.png'),
+                pygame.image.load('images/player/player_5.png')
                 ]
 # Это счётчик текущей картинки
 img_counter = 0
@@ -124,6 +128,8 @@ enemy_img = pygame.image.load('images/enemy.png')
 
 
 # Класс Врага
+
+
 class Enemy:
     def __init__(self, x, y, width, height, image, speed):
         self.x = x
@@ -189,31 +195,35 @@ def start_game():
         make_jump = False
 
 
+full = 0
+bg = 0
+
+
 def set_display_0():
-    global display_width, display_height, display
+    global display_width, display_height, display, bg
 
     display_width = arr_display_width[0]
     display_height = arr_display_height[0]
     display = pygame.display.set_mode((display_width, display_height))
+    bg = 0
 
 
 def set_display_1():
-    global display_width, display_height, display
+    global display_width, display_height, display, bg
 
     display_width = arr_display_width[1]
     display_height = arr_display_height[1]
     display = pygame.display.set_mode((display_width, display_height))
+    bg = 1
 
 
 def set_display_2():
-    global display_width, display_height, display
+    global display_width, display_height, display, bg
 
     display_width = arr_display_width[2]
     display_height = arr_display_height[2]
     display = pygame.display.set_mode((display_width, display_height))
-
-
-full = 0
+    bg = 2
 
 
 def set_fullscreen():
@@ -270,11 +280,11 @@ def main_game():
         if go_left:
             left()
 
-        # # Отрисовка неба
-        # display.blit(sky[0], (0, 0))
-        # # Отрисовка земли
-        # display.blit(dirt[0], (0, display_height - 100))
-        pygame.draw.rect(display, (240, 240, 240), (0, 0, display_width, display_height))
+        # Отрисовка неба
+        display.blit(sky[bg], (0, 0))
+        # Отрисовка земли
+        display.blit(dirt[bg], (0, display_height - 100))
+        # pygame.draw.rect(display, (240, 240, 240), (0, 0, display_width, display_height))
         # Отрисовка врага
         draw_enemy_arr(enemy_arr)
         # Отрисовка игрока
@@ -358,11 +368,19 @@ def collision(array):
 
 def draw_player():
     global img_counter
-    # Анимация замедлена - каждые 10 значений счётчика будет изменяться скорость анимации. Наверное зависит от fps
-    if img_counter == 50:
+
+    if img_counter == 25:
         img_counter = 0
-    display.blit(player_image[img_counter // 10], (player_x, player_y))
+    display.blit(player_image[img_counter // 5], (player_x, player_y))
     img_counter += 1
+
+    # if go_right or go_left:
+    #     if img_counter == 25:
+    #         img_counter = 0
+    #     display.blit(player_image[img_counter // 5], (player_x, player_y))
+    #     img_counter += 1
+    # else:
+    #     display.blit(player_image[3], (player_x, player_y))
 
 
 def print_text(message, x, y, font_color=(255, 255, 255), font_type='fonts/font.ttf', font_size=30):
